@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title>wiki_app</title>
+
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="/stylesheets/normalize.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" media="all">
+  </head>
+
+  <body>
+    <header>
+      <h1>WikiTikiTakaTuku</h1>
+    </header>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="<%= @url %>">Login</a></li>
+      </ul>
+    </nav>
+    <%= yield %>
+    <footer>
+      <h6>@ Michael Coniaris Awesomeness</h6>
+    </footer>
+  </body>
+</html>
