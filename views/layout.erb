@@ -20,7 +20,13 @@
       <ul>
         <li><a href="/">Home</a></li>
         <li><a href="#">About</a></li>
-        <li><a href="<%= @url %>">Login</a></li>
+        <li>
+          <% if session[:access_token] %>
+            <a href="/logout">Logout</a>
+          <% else %>
+            <a href="<%= @url %>">Login with Google</a>
+          <% end %>
+        </li>
       </ul>
     </nav>
     <%= yield %>

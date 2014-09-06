@@ -4,6 +4,9 @@ require 'httparty'
 require 'rack/ssl'
 require 'pry'
 
+# TODO: newer way for Google Oauth:
+# https://developers.google.com/accounts/docs/OAuth2Login#createxsrftoken
+
 # TODO Look into use command in Ruby
 class App < Sinatra::Base
   # use Rack::SSL
@@ -25,7 +28,7 @@ class App < Sinatra::Base
     GOOGLE_CLIENT_SECRET = ENV['GOOGLE_WIKI_APP_CLIENT_SECRET']
         # This endpoint is accessible over SSL, and
     # HTTP connections are refused.
-    GOOGLE_ENDPOINT = "https://accounts.google.com/o/oauth2/auth"
+    GOOGLE_ENDPOINT = "https://accounts.google.com/o/oauth2"
     # TODO: Use high5 to get https working instead.
     # Heroku offers https on all their deployed sites.
     GOOGLE_REDIRECT_URI = "http://localhost:3000/oauth2callback"
@@ -66,7 +69,7 @@ class App < Sinatra::Base
     # should be deleted once testing is done.
     # The default is auto which only shows the
     # screen when approval is needed.
-    @url = "#{GOOGLE_ENDPOINT}?scope=email" +
+    @url = "#{GOOGLE_ENDPOINT}/auth?scope=email" +
       "&redirect_uri=#{GOOGLE_REDIRECT_URI}" +
       "&response_type=code" +
       "&client_id=#{GOOGLE_CLIENT_ID}" +
@@ -95,24 +98,36 @@ class App < Sinatra::Base
   get('/oauth2callback') do
     code = params[:code]
     # compare the states to ensure the information is from who we think it is
-        # binding.pry
     if session[:state] == params[:state]
       # send a POST
       # TODO: review HTTParty syntax on posts
-      response = HTTParty.post("#{GOOGLE_ENDPOINT}",
+
+      response = HTTParty.post("#{GOOGLE_ENDPOINT}/token",
         :body => {
+          grant_type: 'authorization_code',
           code: code,
           client_id: GOOGLE_CLIENT_ID,
           client_secret: GOOGLE_CLIENT_SECRET,
           redirect_uri: GOOGLE_REDIRECT_URI,
-          grant_type: "authorization_code"
+          # response_type: code
         },
         :headers => {
-          "Accept" => "application/json"
+          'Accept' => 'application/json',
+          # Note to self, Google does not want application/json here
+          "Content-Type" => "application/x-www-form-urlencoded",
+          # "grant_type" => "authorization_code"
+
         })
+        binding.pry
+      session[:access_token] = response["access_token"]
       end
     # Redirect to avoid rendering of auth code
     # issue?
+    redirect to("/")
+  end
+
+  get('/logout') do
+    session[:access_token] = nil
     redirect to("/")
   end
 
