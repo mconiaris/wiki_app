@@ -10,6 +10,9 @@ gem 'redis',  '3.1.0'
 group :development do
   gem 'pry'
   gem 'shotgun'
+  # To create SSL connections as required
+  # by Google's Oauth2 tool
+  gem 'rack-ssl'
 end
 
 group :production do
