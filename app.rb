@@ -1,5 +1,6 @@
 require 'securerandom'
 require 'sinatra/base'
+require 'httparty'
 require 'rack/ssl'
 require 'pry'
 
@@ -15,10 +16,19 @@ class App < Sinatra::Base
     enable :logging
     enable :method_override
     enable :sessions
+    # Research set :session_secret further
+    # set the secret yourself, so all your
+    # application instances share it:
+    set :session_secret, 'super secret'
 
     GOOGLE_CLIENT_ID = ENV['GOOGLE_WIKI_APP_ID']
     GOOGLE_CLIENT_SECRET = ENV['GOOGLE_WIKI_APP_CLIENT_SECRET']
-
+        # This endpoint is accessible over SSL, and
+    # HTTP connections are refused.
+    GOOGLE_ENDPOINT = "https://accounts.google.com/o/oauth2/auth"
+    # TODO: Use high5 to get https working instead.
+    # Heroku offers https on all their deployed sites.
+    GOOGLE_REDIRECT_URI = "http://localhost:3000/oauth2callback"
   end
 
   before do
@@ -38,11 +48,6 @@ class App < Sinatra::Base
 # https://127.0.01:3000/oauth2callback
 
   get('/') do
-    # This endpoint is accessible over SSL, and
-    # HTTP connections are refused.
-    GOOGLE_ENDPOINT = "https://accounts.google.com/o/oauth2/auth"
-    GOOGLE_REDIRECT_URI = "http://localhost:3000/oauth2callback"
-
     # https://developers.google.com/accounts/docs/OAuth2Login#createxsrftoken
     # The Google Authorization Server roundtrips
     # the state parameter, so your application
@@ -55,7 +60,6 @@ class App < Sinatra::Base
     # storing state in session because we need to
     # compare it in a later request
     session[:state] = state
-    binding.pry
     # TODO right now the URL has approval_prompt
     # value of force, which shows the consent
     # screen everytime I attempt to login. This
@@ -68,7 +72,7 @@ class App < Sinatra::Base
       "&client_id=#{GOOGLE_CLIENT_ID}" +
       "&state=#{state}" +
       "&approval_promt=force"
-      # binding.pry
+    # binding.pry
     render(:erb, :index)
   end
 
@@ -91,7 +95,7 @@ class App < Sinatra::Base
   get('/oauth2callback') do
     code = params[:code]
     # compare the states to ensure the information is from who we think it is
-        binding.pry
+        # binding.pry
     if session[:state] == params[:state]
       # send a POST
       # TODO: review HTTParty syntax on posts
@@ -101,7 +105,7 @@ class App < Sinatra::Base
           client_id: GOOGLE_CLIENT_ID,
           client_secret: GOOGLE_CLIENT_SECRET,
           redirect_uri: GOOGLE_REDIRECT_URI,
-          grant_type: authorization_code
+          grant_type: "authorization_code"
         },
         :headers => {
           "Accept" => "application/json"
