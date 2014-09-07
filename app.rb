@@ -2,7 +2,11 @@ require 'securerandom'
 require 'sinatra/base'
 require 'httparty'
 require 'rack/ssl'
+require './wikidocument'
+require 'redis'
+require 'json'
 require 'pry'
+require 'uri'
 
 # TODO: newer way for Google Oauth:
 # https://developers.google.com/accounts/docs/OAuth2Login#createxsrftoken
@@ -32,6 +36,10 @@ class App < Sinatra::Base
     # TODO: Use high5 to get https working instead.
     # Heroku offers https on all their deployed sites.
     GOOGLE_REDIRECT_URI = "http://localhost:3000/oauth2callback"
+    uri = URI.parse(ENV["REDISTOGO_URL"])
+    $redis = Redis.new({:host => uri.host,
+                    :port => uri.port,
+                    :password => uri.password})
   end
 
   before do
@@ -44,11 +52,18 @@ class App < Sinatra::Base
   end
 
   ########################
+  # Methods
+  ########################
+
+  def get_articles
+    raw_data = $redis.get("article")
+    display = JSON.parse(raw_data)
+  end
+
+  ########################
   # Routes
   ########################
 
-# https://127.0.01:3000/
-# https://127.0.01:3000/oauth2callback
 
   get('/') do
     # https://developers.google.com/accounts/docs/OAuth2Login#createxsrftoken
@@ -118,7 +133,7 @@ class App < Sinatra::Base
           # "grant_type" => "authorization_code"
 
         })
-        binding.pry
+        # binding.pry
       session[:access_token] = response["access_token"]
       end
     # Redirect to avoid rendering of auth code
@@ -126,7 +141,30 @@ class App < Sinatra::Base
     redirect to("/")
   end
 
+  get '/documents' do
+    render :erb, :documents
+  end
+
+  post('/documents') do
+    doc = WikiDocument.new(
+      params[:article_title],
+      params[:article_author],
+      params[:article_text])
+
+    # binding.pry
+    $redis.set("article", doc.to_json)
+
+    redirect '/documents'
+  end
+
+  get('/documents/new') do
+    # binding.pry
+    render :erb, :document_new
+  end
+
+
   get('/logout') do
+    binding.pry
     session[:access_token] = nil
     redirect to("/")
   end

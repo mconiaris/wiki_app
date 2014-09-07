@@ -1,0 +1,20 @@
+<form action="/documents" method="post">
+  <h1>Create a Document</h1>
+  <ul>
+    <li>
+<!--       TODO: author should have default value
+      of person signed in. -->
+      <label for="author">Author</label>
+      <input name="article_author" id="author" type="text"/>
+    </li>
+    <li>
+      <label for="title">Title</label>
+      <input name="article_title" id="title" type="text"/>
+    </li>
+    <li>
+      <label for="text">Text</label>
+      <input name="article_text" id="text" type="textarea" multiline/>
+    </li>
+  </ul>
+  <input type="submit" value="Submit">
+</form>
