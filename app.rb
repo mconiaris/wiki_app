@@ -1,8 +1,9 @@
+require './wikidocument'
 require 'securerandom'
 require 'sinatra/base'
+require 'redcarpet'
 require 'httparty'
 require 'rack/ssl'
-require './wikidocument'
 require 'redis'
 require 'json'
 require 'pry'
@@ -13,6 +14,7 @@ require 'uri'
 
 # TODO Look into use command in Ruby
 class App < Sinatra::Base
+  extend Redcarpet
   # use Rack::SSL
 
   ########################
@@ -59,6 +61,7 @@ class App < Sinatra::Base
     raw_data = $redis.get("article")
     display = JSON.parse(raw_data)
   end
+
 
   ########################
   # Routes
@@ -151,7 +154,8 @@ class App < Sinatra::Base
       params[:article_author],
       params[:article_text])
 
-    # binding.pry
+    markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, extensions={})
+    binding.pry
     $redis.set("article", doc.to_json)
 
     redirect '/documents'

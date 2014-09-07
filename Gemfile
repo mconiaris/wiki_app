@@ -5,6 +5,8 @@ ruby "2.1.2"
 
 gem 'sinatra', '1.4.5'
 gem 'redis',  '3.1.0'
+gem 'redcarpet'
+gem 'markdown'
 gem 'httparty'
 
 # only used in development locally
