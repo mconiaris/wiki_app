@@ -43,7 +43,7 @@ class App < Sinatra::Base
                     :port => uri.port,
                     :password => uri.password})
     # Set Redis Counter
-    counter = 0
+    # counter = 0
     # Array to display documents
 
   end
