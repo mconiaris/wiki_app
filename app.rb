@@ -62,6 +62,12 @@ class App < Sinatra::Base
     display = JSON.parse(raw_data)
   end
 
+  #TODO: Render both params. Format on Wiki Page
+  def render_to_html(title, text)
+    markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, extensions={})
+    rendered_title = markdown.render(title)
+    rendered_text = markdown.render(text)
+  end
 
   ########################
   # Routes
@@ -154,10 +160,9 @@ class App < Sinatra::Base
       params[:article_author],
       params[:article_text])
 
-    markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, extensions={})
-    binding.pry
+    # binding.pry
     $redis.set("article", doc.to_json)
-
+    binding.pry
     redirect '/documents'
   end
 
