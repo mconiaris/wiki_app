@@ -1,6 +1,6 @@
 class WikiDocument
 
-  attr_reader :author
+  attr_reader :author, :time
   attr_accessor :title, :text
 
   # TODO: Have author value filled in via login

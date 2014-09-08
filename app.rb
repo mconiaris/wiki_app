@@ -172,7 +172,9 @@ class App < Sinatra::Base
         })
         # binding.pry
       session[:access_token] = response["access_token"]
-      end
+
+      request = HTTParty.get()
+    end
     # Redirect to avoid rendering of auth code
     # issue?
     redirect to("/")
@@ -184,28 +186,31 @@ class App < Sinatra::Base
     render :erb, :document_new
   end
 
+  # FIXME Getting wrong values
   get('/documents/:id') do
-    @documents = $redis.keys("*article:*").select do |key|
-      create_document_to_show(key).title == "\##{params[:id]}"
-    end
-    @documents
+      binding.pry
+
+      # Cycle through keys, find correct title name
+      # match the two
+      # return that one value
+    @document = create_document_to_show("\##{params[:id]}")
     render :erb, :documents_show
   end
 
-  # TODO: Get all articles from Redis.
+  # Get all articles from Redis.
   get '/documents' do
     render :erb, :documents
   end
 
-  # TODO: Add timestamp to WikiDoument class and
-  # pull it here.
+  # TODO: Ensure no duplicate titles with
+  # if statement.
   post('/documents') do
     doc = WikiDocument.new(
       params[:article_title],
       params[:article_author],
       params[:article_text])
 
-    # binding.pry
+    binding.pry
     $redis.set("article:#{$redis.incr("counter")}", doc.to_json)
     redirect '/documents'
   end

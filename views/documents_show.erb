@@ -1,4 +1,3 @@
-<% @documents = generate_documents_array %>
-<%= render_to_html(@documents[0].title) %>
-<%= render_to_html(@documents[0].author) %>
-<%= render_to_html(@documents[0].text) %>
+<%= render_to_html(@document.title) %>
+<%= render_to_html(@document.author) %>
+<%= render_to_html(@documents.text) %>
