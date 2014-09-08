@@ -79,3 +79,10 @@ describe("documents.erb") do
     expect(page).to have_content("User Story Frames")
   end
 end
+
+describe("/documents/Wiki") do
+  it("displays PJ's Wiki article") do
+    visit("/documents/Wiki")
+    expect(page).to have_content("The slug needs to be meaningful")
+  end
+end

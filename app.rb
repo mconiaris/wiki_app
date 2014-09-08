@@ -77,6 +77,24 @@ class App < Sinatra::Base
     @rendered_text = markdown.render(text)
   end
 
+  def generate_documents_array
+    @documents = []
+    # TODO: Factor this all out into a method.
+    # Get article from redis
+    $redis.keys("*article:*").each do |key|
+      raw_data = $redis.get(key)
+      parsed_data = JSON.parse(raw_data)
+
+      document = WikiDocument.new(
+        parsed_data["title"],
+        parsed_data["author"],
+        parsed_data["text"])
+      @documents.push(document)
+      # binding.pry
+    end
+    @documents
+  end
+
   ########################
   # Routes
   ########################
@@ -156,22 +174,48 @@ class App < Sinatra::Base
     redirect to("/")
   end
 
-  # TODO: Get all articles from Redis.
-  get '/documents' do
-    @documents = []
-    # TODO: Factor this all out into a method.
-    # Get article from redis
-    $redis.keys("*article:*").each do |key|
-      raw_data = $redis.get(key)
+  # Opens a form that allows the user to
+  # create a new document.
+  get('/documents/new') do
+    render :erb, :document_new
+  end
+
+  get('/documents/:id') do
+    raw_data = $redis.get(key)
       parsed_data = JSON.parse(raw_data)
 
-      document = WikiDocument.new(
-        parsed_data["title"],
-        parsed_data["author"],
-        parsed_data["text"])
-      @documents.push(document)
-      # binding.pry
-    end
+    # TODO: Factor this out
+    document = WikiDocument.new(
+      parsed_data["title"],
+      parsed_data["author"],
+      parsed_data["text"])
+    @documents.push(document)
+    render :erb, :documents_show
+  end
+
+  # TODO: Get all articles from Redis.
+  get '/documents' do
+    # @documents = generate_documents_array
+
+
+
+
+    # @documents = []
+    # # TODO: Factor this all out into a method.
+    # # Get article from redis
+    # $redis.keys("*article:*").each do |key|
+    #   raw_data = $redis.get(key)
+    #   parsed_data = JSON.parse(raw_data)
+
+    #   document = WikiDocument.new(
+    #     parsed_data["title"],
+    #     parsed_data["author"],
+    #     parsed_data["text"])
+    #   @documents.push(document)
+    #   # binding.pry
+
+
+
     # binding.pry
     # @title = render_to_html(parsed_data["title"])
     # @author = render_to_html(parsed_data["author"])
@@ -179,8 +223,8 @@ class App < Sinatra::Base
     render :erb, :documents
   end
 
-  # TODO: Modify so that multiple entries are
-  # created.
+  # TODO: Add timestamp to WikiDoument class and
+  # pull it here.
   post('/documents') do
     doc = WikiDocument.new(
       params[:article_title],
@@ -189,18 +233,7 @@ class App < Sinatra::Base
 
     # binding.pry
     $redis.set("article:#{$redis.incr("counter")}", doc.to_json)
-    # binding.pry
     redirect '/documents'
-  end
-
-  get('/documents/new') do
-    # binding.pry
-    render :erb, :document_new
-  end
-
-  get('/documents/:id') do
-
-    render :erb, :documents_show
   end
 
 
