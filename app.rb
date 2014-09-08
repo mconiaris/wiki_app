@@ -157,9 +157,10 @@ class App < Sinatra::Base
     redirect to("/")
   end
 
+  # TODO: Get all articles from Redis.
   get '/documents' do
     # Get article from redis
-    raw_data = $redis.get("article")
+    raw_data = $redis.get("article1")
     parsed_data = JSON.parse(raw_data)
     @document = WikiDocument.new(
       parsed_data["title"],
@@ -174,6 +175,8 @@ class App < Sinatra::Base
     render :erb, :documents
   end
 
+  # TODO: Modify so that multiple entries are
+  # created.
   post('/documents') do
     doc = WikiDocument.new(
       params[:article_title],
@@ -181,7 +184,7 @@ class App < Sinatra::Base
       params[:article_text])
 
     # binding.pry
-    $redis.set("article", doc.to_json)
+    $redis.set("article1", doc.to_json)
     # binding.pry
     redirect '/documents'
   end
@@ -189,6 +192,11 @@ class App < Sinatra::Base
   get('/documents/new') do
     # binding.pry
     render :erb, :document_new
+  end
+
+  get('/documents/:id') do
+
+    render :erb, :documents_show
   end
 
 
