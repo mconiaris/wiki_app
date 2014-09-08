@@ -151,6 +151,12 @@ class App < Sinatra::Base
   end
 
   get '/documents' do
+    # Get article from redis
+    raw_data = $redis.get("article")
+    parsed_data = JSON.parse(raw_data)
+    binding.pry
+    @document = render_to_html(parsed_data["title"],
+      parsed_data["text"])
     render :erb, :documents
   end
 
