@@ -77,22 +77,26 @@ class App < Sinatra::Base
     @rendered_text = markdown.render(text)
   end
 
+  # Create a list of all documents/articles
   def generate_documents_array
     @documents = []
-    # TODO: Factor this all out into a method.
-    # Get article from redis
     $redis.keys("*article:*").each do |key|
-      raw_data = $redis.get(key)
-      parsed_data = JSON.parse(raw_data)
-
-      document = WikiDocument.new(
-        parsed_data["title"],
-        parsed_data["author"],
-        parsed_data["text"])
+      document = create_document_to_show(key)
       @documents.push(document)
       # binding.pry
     end
     @documents
+  end
+
+  # Get article from redis
+  def create_document_to_show(key)
+    raw_data = $redis.get(key)
+    parsed_data = JSON.parse(raw_data)
+
+    document = WikiDocument.new(
+      parsed_data["title"],
+      parsed_data["author"],
+      parsed_data["text"])
   end
 
   ########################
@@ -181,45 +185,15 @@ class App < Sinatra::Base
   end
 
   get('/documents/:id') do
-    raw_data = $redis.get(key)
-      parsed_data = JSON.parse(raw_data)
-
-    # TODO: Factor this out
-    document = WikiDocument.new(
-      parsed_data["title"],
-      parsed_data["author"],
-      parsed_data["text"])
-    @documents.push(document)
+    @documents = $redis.keys("*article:*").select do |key|
+      create_document_to_show(key).title == "\##{params[:id]}"
+    end
+    @documents
     render :erb, :documents_show
   end
 
   # TODO: Get all articles from Redis.
   get '/documents' do
-    # @documents = generate_documents_array
-
-
-
-
-    # @documents = []
-    # # TODO: Factor this all out into a method.
-    # # Get article from redis
-    # $redis.keys("*article:*").each do |key|
-    #   raw_data = $redis.get(key)
-    #   parsed_data = JSON.parse(raw_data)
-
-    #   document = WikiDocument.new(
-    #     parsed_data["title"],
-    #     parsed_data["author"],
-    #     parsed_data["text"])
-    #   @documents.push(document)
-    #   # binding.pry
-
-
-
-    # binding.pry
-    # @title = render_to_html(parsed_data["title"])
-    # @author = render_to_html(parsed_data["author"])
-    # @document = render_to_html(parsed_data["text"])
     render :erb, :documents
   end
 
