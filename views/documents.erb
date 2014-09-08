@@ -1,4 +1,8 @@
-<%= @title %>
-By <%= @author %>
-<%= @document %>
+<%= @documents[0].title %>
+<% @documents.each do |document| %>
+<%= document.title %>
+<%= document.author %>
+<%= document.text %>
+<% end %>
+
 

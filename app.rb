@@ -25,14 +25,14 @@ class App < Sinatra::Base
     enable :logging
     enable :method_override
     enable :sessions
-    # Research set :session_secret further
+    # TODO: Research set :session_secret further
     # set the secret yourself, so all your
     # application instances share it:
     set :session_secret, 'super secret'
 
     GOOGLE_CLIENT_ID = ENV['GOOGLE_WIKI_APP_ID']
     GOOGLE_CLIENT_SECRET = ENV['GOOGLE_WIKI_APP_CLIENT_SECRET']
-        # This endpoint is accessible over SSL, and
+    # This endpoint is accessible over SSL, and
     # HTTP connections are refused.
     GOOGLE_ENDPOINT = "https://accounts.google.com/o/oauth2"
     # TODO: Use high5 to get https working instead.
@@ -44,6 +44,8 @@ class App < Sinatra::Base
                     :password => uri.password})
     # Set Redis Counter
     counter = 0
+    # Array to display documents
+
   end
 
   before do
@@ -64,10 +66,7 @@ class App < Sinatra::Base
     display = JSON.parse(raw_data)
   end
 
-  #TODO: Render both params. Format on Wiki Page
   # Takes in Markdown text and returns HTML
-  # FIXME: HTML Text tag needs to be widened
-  # and it needs to take in newlines.
   def render_to_html(text)
     markdown = Redcarpet::Markdown.new(
       Redcarpet::Render::HTML,
@@ -134,7 +133,6 @@ class App < Sinatra::Base
     if session[:state] == params[:state]
       # send a POST
       # TODO: review HTTParty syntax on posts
-
       response = HTTParty.post("#{GOOGLE_ENDPOINT}/token",
         :body => {
           grant_type: 'authorization_code',
@@ -149,7 +147,6 @@ class App < Sinatra::Base
           # Note to self, Google does not want application/json here
           "Content-Type" => "application/x-www-form-urlencoded",
           # "grant_type" => "authorization_code"
-
         })
         # binding.pry
       session[:access_token] = response["access_token"]
@@ -161,19 +158,24 @@ class App < Sinatra::Base
 
   # TODO: Get all articles from Redis.
   get '/documents' do
+    @documents = []
+    # TODO: Factor this all out into a method.
     # Get article from redis
-    raw_data = $redis.get("article1")
-    parsed_data = JSON.parse(raw_data)
-    @document = WikiDocument.new(
-      parsed_data["title"],
-      parsed_data["author"],
-      parsed_data["text"])
+    $redis.keys("*article:*").each do |key|
+      raw_data = $redis.get(key)
+      parsed_data = JSON.parse(raw_data)
 
-
-    @title = render_to_html(parsed_data["title"])
-    @author = render_to_html(parsed_data["author"])
-    @document = render_to_html(parsed_data["text"])
+      document = WikiDocument.new(
+        parsed_data["title"],
+        parsed_data["author"],
+        parsed_data["text"])
+      @documents.push(document)
+      # binding.pry
+    end
     # binding.pry
+    # @title = render_to_html(parsed_data["title"])
+    # @author = render_to_html(parsed_data["author"])
+    # @document = render_to_html(parsed_data["text"])
     render :erb, :documents
   end
 
