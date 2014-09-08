@@ -42,6 +42,8 @@ class App < Sinatra::Base
     $redis = Redis.new({:host => uri.host,
                     :port => uri.port,
                     :password => uri.password})
+    # Set Redis Counter
+    counter = 0
   end
 
   before do
@@ -184,7 +186,7 @@ class App < Sinatra::Base
       params[:article_text])
 
     # binding.pry
-    $redis.set("article1", doc.to_json)
+    $redis.set("article:#{$redis.incr("counter")}", doc.to_json)
     # binding.pry
     redirect '/documents'
   end
