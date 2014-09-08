@@ -188,12 +188,15 @@ class App < Sinatra::Base
 
   # FIXME Getting wrong values
   get('/documents/:id') do
-      binding.pry
-
+      @documents = generate_documents_array
+      @documents.each do |doc|
+        @document = doc if doc.title == "\##{params[:id]}"
+      end
       # Cycle through keys, find correct title name
       # match the two
       # return that one value
-    @document = create_document_to_show("\##{params[:id]}")
+    # @document = create_document_to_show("\##{params[:id]}")
+    # binding.pry
     render :erb, :documents_show
   end
 
