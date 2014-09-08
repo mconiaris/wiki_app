@@ -170,7 +170,7 @@ class App < Sinatra::Base
     @title = render_to_html(parsed_data["title"])
     @author = render_to_html(parsed_data["author"])
     @document = render_to_html(parsed_data["text"])
-    binding.pry
+    # binding.pry
     render :erb, :documents
   end
 
@@ -193,7 +193,7 @@ class App < Sinatra::Base
 
 
   get('/logout') do
-    binding.pry
+    # binding.pry
     session[:access_token] = nil
     redirect to("/")
   end

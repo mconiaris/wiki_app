@@ -1,3 +1,10 @@
+# TODO: fix test string.
+# Cannot get the right test text to go in.
+# It works fine when I do it, but not in a test.
+mark_text = <<EOF
+### Necessary for MVP\\r\\n\\r\\n- **Resources**: `documents`, `users`\\r\\n- **User Story Frames**:\\r\\n  - **(1) NEW & POST:** A user can create a new `document`... (`/documents/new` -> `POST /documents`)\\r\\n  - **(2) SHOW:** A user can show (ie, see) a given `document`... (`/documents/document-id`)\\r\\n  - **(3) INDEX:** A user can see all of the `documents` as a *feed*, up to a maximum of ten... (`/documents`)\\r\\n  - **(4) INDEX:** A user can browse successive pages of ten `documents` each, until the beginning of the feed... (`/documents?first=id-of-first-document`)
+EOF
+
 # If you are not using Rails, tag all the example
 # groups in which you want to use Capybara with
 # :type => :feature.
@@ -56,5 +63,19 @@ describe("documents.erb") do
   it("exists and has content that includes 'I have found'") do
     visit("/documents")
     expect(page).to have_content("I have found")
+  end
+  it("textbox takes in markdown") do
+    visit("/documents/new")
+    fill_in 'Author', with: 'PJ'
+    fill_in 'Title', with: '#Wiki'
+    fill_in 'Text', with: mark_text
+    click_button 'Submit'
+  end
+end
+
+describe("documents.erb") do
+  it("exists and has content that includes 'User Story Frames'") do
+    visit("/documents")
+    expect(page).to have_content("User Story Frames")
   end
 end
