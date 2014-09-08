@@ -63,10 +63,17 @@ class App < Sinatra::Base
   end
 
   #TODO: Render both params. Format on Wiki Page
-  def render_to_html(title, text)
-    markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, extensions={})
-    rendered_title = markdown.render(title)
-    rendered_text = markdown.render(text)
+  # Takes in Markdown text and returns HTML
+  # FIXME: HTML Text tag needs to be widened
+  # and it needs to take in newlines.
+  def render_to_html(text)
+    markdown = Redcarpet::Markdown.new(
+      Redcarpet::Render::HTML,
+        :fenced_code_blocks => true,
+        :hard_wrap => true
+        )
+    # binding.pry
+    @rendered_text = markdown.render(text)
   end
 
   ########################
@@ -154,9 +161,16 @@ class App < Sinatra::Base
     # Get article from redis
     raw_data = $redis.get("article")
     parsed_data = JSON.parse(raw_data)
-    binding.pry
-    @document = render_to_html(parsed_data["title"],
+    @document = WikiDocument.new(
+      parsed_data["title"],
+      parsed_data["author"],
       parsed_data["text"])
+
+
+    @title = render_to_html(parsed_data["title"])
+    @author = render_to_html(parsed_data["author"])
+    @document = render_to_html(parsed_data["text"])
+    binding.pry
     render :erb, :documents
   end
 
@@ -168,7 +182,7 @@ class App < Sinatra::Base
 
     # binding.pry
     $redis.set("article", doc.to_json)
-    binding.pry
+    # binding.pry
     redirect '/documents'
   end
 
