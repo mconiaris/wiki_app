@@ -1,4 +1,11 @@
-<%= render_to_html(@document["title"])
-    render_to_html(@document["author"])
-    render_to_html(@document["text"]) %>
-<a href="/documents/<%=params["id"]%>/edit"/>Edit</a>
+<form method="post" action="/documents/<%=params["id"]%>">
+    <input type="hidden" name="_method" value="put">
+      <div =id"edit_document" contenteditable="true">
+        <p><%=
+          render_to_html(@document["title"])
+          render_to_html(@document["author"])
+          render_to_html(@document["text"]) %>
+        </p>
+      </div>
+    <button type="submit">Update</button>
+</form>

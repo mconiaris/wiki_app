@@ -213,8 +213,10 @@ class App < Sinatra::Base
     render :erb, :documents_show
   end
 
-
-
+  get "/documents/:id/edit" do
+    find_article(params)
+    render :erb, :document_edit
+  end
 
   # Get all articles from Redis.
   # Query String request values from @documents array
@@ -230,9 +232,6 @@ class App < Sinatra::Base
     render :erb, :documents
   end
 
-  get "/documents/:id/edit" do
-    render :erb, :document_edit
-  end
 
 
   get('/logout') do
