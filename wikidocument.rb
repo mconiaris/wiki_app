@@ -1,7 +1,7 @@
 class WikiDocument
 
   attr_reader :author, :time, :id
-  attr_accessor :title, :text
+  attr_accessor :title, :text, :key
 
   @@id = 1
 
@@ -11,7 +11,8 @@ class WikiDocument
     @author = author
     @text = text
     @time = Time.new
-    @id = "article:#{@@id}"
+    @id = @@id
+    @key = "article:#{@id}"
     @@id += 1
   end
 
@@ -19,7 +20,8 @@ class WikiDocument
   # a hash and then into json.
   def to_json
     article = {
-      "key"     => id,
+      "key"     => key,
+      "id"      => id,
       "title"   => title,
       "author"  => author,
       "text"    => text,
@@ -27,5 +29,4 @@ class WikiDocument
     }
     article.to_json
   end
-
 end

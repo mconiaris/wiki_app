@@ -84,8 +84,9 @@ class App < Sinatra::Base
       document = get_document_from_redis(key)
       @documents.push(document)
     end
-      # binding.pry
-    @documents
+    @documents.sort_by! { |hsh| hsh["id"]}
+    @documents.reverse!
+    # binding.pry
   end
 
   # Get article from redis and turn it in
@@ -97,8 +98,11 @@ class App < Sinatra::Base
   end
 
   def add_document_to_redis(doc)
-    $redis.set(doc.id, doc.to_json)
+    # binding.pry
+    $redis.set(doc.key, doc.to_json)
   end
+
+
 
   ########################
   # Routes
@@ -217,10 +221,10 @@ class App < Sinatra::Base
     index_start = params[:index_start].to_i || 0
     @generated_documents_array = generate_documents_array
     @documents = @generated_documents_array[index_start, index_start + 10]
-
     # binding.pry
     render :erb, :documents
   end
+
 
   # TODO: Ensure no duplicate titles with
   # if statement.
@@ -231,7 +235,6 @@ class App < Sinatra::Base
       params[:article_text])
 
     add_document_to_redis(doc)
-    # binding.pry
     redirect '/documents'
   end
 

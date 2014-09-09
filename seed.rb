@@ -185,7 +185,7 @@ while counter > 0
       "placeholderstory#{counter}",
       authors.sample,
       texts.sample)
-  $redis.set(doc.id, doc.to_json)
+  $redis.set(doc.key, doc.to_json)
   counter -= 1
   # binding.pry
 end
