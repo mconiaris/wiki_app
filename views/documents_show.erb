@@ -1,4 +1,5 @@
 <%= render_to_html(@document["title"])
     render_to_html(@document["author"])
     render_to_html(@document["text"]) %>
-<a href="/documents/<%=params["id"]%>/edit"/>Edit</a>
+<a href="/documents/<%=params["id"]%>/edit"/>Edit</a> |
+<a href="/documents/<%=params["id"]%>/edit"/>Delete</a>

@@ -191,6 +191,11 @@ class App < Sinatra::Base
       #TODO: If you do a binding.pry here and type request, you will see the data that you want.
       # binding.pry
     end
+    # Google recommend that the server first
+    # handle the request, then redirect to
+    # another URL that doesn't include the
+    # response parameters.
+    # TODO redirect link.
     # Redirect to avoid rendering of auth code
     # issue?
     redirect to("/")
@@ -233,20 +238,6 @@ class App < Sinatra::Base
     render :erb, :documents
   end
 
-  # TODO: use contenteditable in my HTML form
-  # to make a real time editor. Could not figure
-  # out the submission process without Javascript
-  put('/documents/:id') do
-    # Find article to be edited
-    document = find_article(params)
-    binding.pry
-    # isolate new value and replace existing article.
-    document["text"] = params["article_text"]
-    $redis.set(document["key"], document.to_json)
-    # submit to $redis
-    redirect to("/documents/#{params[:id]}")
-  end
-
   get('/logout') do
     # binding.pry
     session[:access_token] = nil
@@ -267,9 +258,28 @@ class App < Sinatra::Base
 
 
 
-  # Google recommend that the server first
-  # handle the request, then redirect to
-  # another URL that doesn't include the
-  # responsenparameters.
-  # TODO redirect link.
+  # TODO: use contenteditable in my HTML form
+  # to make a real time editor. Could not figure
+  # out the submission process without Javascript
+  put('/documents/:id') do
+    # Find article to be edited
+    document = find_article(params)
+    binding.pry
+    # isolate new value and replace existing article.
+    document["text"] = params["article_text"]
+    $redis.set(document["key"], document.to_json)
+    # submit to $redis
+    redirect to("/documents/#{params[:id]}")
+  end
+
+  # Delete a document
+  delete('/documents/:id') do
+    document = find_article(params)
+    binding.pry
+    $redis.del(document["key"])
+    redirect to '/documents'
+  end
+
 end
+
+
