@@ -103,12 +103,13 @@ class App < Sinatra::Base
   end
 
   def find_article(params)
-    @documents = generate_documents_array
-    @documents.each do |doc|
-      @document = doc if doc["title"] == "\##{params[:id]}"
+    documents = generate_documents_array
+    documents.each do |doc|
+      if doc["title"] == "##{params[:id]}"
+        return doc
+      end
     end
   end
-
 
   ########################
   # Routes
@@ -204,7 +205,7 @@ class App < Sinatra::Base
   # FIXME Changed @documents from objects to
   # Hashes and therefore need to revise this.
   get('/documents/:id') do
-      find_article(params)
+      @document = find_article(params)
       # Cycle through keys, find correct title name
       # match the two
       # return that one value
@@ -214,7 +215,7 @@ class App < Sinatra::Base
   end
 
   get "/documents/:id/edit" do
-    find_article(params)
+    @document = find_article(params)
     render :erb, :document_edit
   end
 
@@ -232,7 +233,16 @@ class App < Sinatra::Base
     render :erb, :documents
   end
 
-
+  # TODO: use contenteditable in my HTML form
+  # to make a real time editor. Could not figure
+  # out the submission process without Javascript
+  put('/documents/:id') do
+    binding.pry
+    # Find article to be edited
+    # isolate new value.
+    # submit to $redis
+    redirect to("/documents/#{params[:id]}")
+  end
 
   get('/logout') do
     # binding.pry
