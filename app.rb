@@ -199,9 +199,8 @@ class App < Sinatra::Base
   # Hashes and therefore need to revise this.
   get('/documents/:id') do
       @documents = generate_documents_array
-      # binding.pry
       @documents.each do |doc|
-        @document = doc if doc.title == "\##{params[:id]}"
+        @document = doc if doc["title"] == "\##{params[:id]}"
       end
       # Cycle through keys, find correct title name
       # match the two
@@ -225,6 +224,16 @@ class App < Sinatra::Base
     render :erb, :documents
   end
 
+  get "/documents/#{:id}/edit:" do
+
+  end
+
+
+  get('/logout') do
+    # binding.pry
+    session[:access_token] = nil
+    redirect to("/")
+  end
 
   # TODO: Ensure no duplicate titles with
   # if statement.
@@ -239,11 +248,6 @@ class App < Sinatra::Base
   end
 
 
-  get('/logout') do
-    # binding.pry
-    session[:access_token] = nil
-    redirect to("/")
-  end
 
   # Google recommend that the server first
   # handle the request, then redirect to

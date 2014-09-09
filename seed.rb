@@ -182,7 +182,7 @@ $redis = Redis.new({:host => uri.host,
 counter = 25
 while counter > 0
   doc = WikiDocument.new(
-      "placeholderstory#{counter}",
+      "\#placeholderstory#{counter}",
       authors.sample,
       texts.sample)
   $redis.set(doc.key, doc.to_json)
