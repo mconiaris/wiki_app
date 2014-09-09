@@ -66,7 +66,7 @@ describe("document_new.erb") do
   end
 end
 
-describe("documents.erb") do
+xdescribe("documents.erb") do
   it("exists and has content that includes 'I have found'") do
     visit("/documents")
     expect(page).to have_content("I have found")
@@ -75,13 +75,13 @@ describe("documents.erb") do
     visit("/documents/new")
     fill_in 'Author', with: 'PJ'
     fill_in 'Title', with: '#Wiki'
-    binding.pry
+    # binding.pry
     fill_in 'Text', with: mark_text
     click_button 'Submit'
   end
 end
 
-describe("documents.erb") do
+xdescribe("documents.erb") do
   it("exists and has content that includes 'User Story Frames'") do
     visit("/documents")
     expect(page).to have_content("User Story Frames")
@@ -91,6 +91,14 @@ end
 describe("/documents/Wiki") do
   it("displays PJ's Wiki article") do
     visit("/documents/Wiki")
+    expect(page).to have_content("A user can create a new document")
+  end
+end
+
+describe("/documents/Wiki") do
+  it("opens for editing") do
+    visit("/documents/Wiki/edit")
     expect(page).to have_content("The slug needs to be meaningful")
+    page.find_field("text")
   end
 end
