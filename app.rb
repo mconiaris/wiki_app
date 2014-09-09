@@ -206,7 +206,7 @@ class App < Sinatra::Base
       # match the two
       # return that one value
     # @document = create_document_to_show("\##{params[:id]}")
-    # binding.pry
+    binding.pry
     render :erb, :documents_show
   end
 
