@@ -102,6 +102,12 @@ class App < Sinatra::Base
     $redis.set(doc.key, doc.to_json)
   end
 
+  def find_article(params)
+    @documents = generate_documents_array
+    @documents.each do |doc|
+      @document = doc if doc["title"] == "\##{params[:id]}"
+    end
+  end
 
 
   ########################
@@ -198,10 +204,7 @@ class App < Sinatra::Base
   # FIXME Changed @documents from objects to
   # Hashes and therefore need to revise this.
   get('/documents/:id') do
-      @documents = generate_documents_array
-      @documents.each do |doc|
-        @document = doc if doc["title"] == "\##{params[:id]}"
-      end
+      find_article(params)
       # Cycle through keys, find correct title name
       # match the two
       # return that one value
@@ -209,6 +212,9 @@ class App < Sinatra::Base
     # binding.pry
     render :erb, :documents_show
   end
+
+
+
 
   # Get all articles from Redis.
   # Query String request values from @documents array
