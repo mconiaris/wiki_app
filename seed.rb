@@ -2,6 +2,7 @@ require './wikidocument'
 require 'redis'
 require 'json'
 require 'uri'
+require 'pry'
 
 a = <<EOF
 ## WDInstagram with Redis
@@ -184,6 +185,7 @@ while counter > 0
       "placeholderstory#{counter}",
       authors.sample,
       texts.sample)
-  $redis.set("article:#{counter}", doc.to_json)
+  $redis.set(doc.id, doc.to_json)
   counter -= 1
+  # binding.pry
 end

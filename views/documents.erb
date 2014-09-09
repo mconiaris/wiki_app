@@ -1,10 +1,8 @@
-<% @documents = generate_documents_array %>
-<% binding.pry %>
 <% @documents.each do |document| %>
-<%= render_to_html(document.title) %>
-<%= render_to_html(document.author) %>
-<%= render_to_html(document.text) %>
-<%= document.time %> | <a href="/documents/<%= document.title.gsub("\#", "") %>"/>Article</a>
+<%= render_to_html(document["title"]) %>
+<%= render_to_html(document["author"]) %>
+<%= render_to_html(document["text"]) %>
+<%= document["time"] %> | <a href="/documents/<%= document["title"].gsub("\#", "") %>"/>Article</a>
 <% end %>
 
 

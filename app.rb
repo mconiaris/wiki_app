@@ -61,10 +61,10 @@ class App < Sinatra::Base
   # Methods
   ########################
 
-  def get_articles
-    raw_data = $redis.get("article")
-    display = JSON.parse(raw_data)
-  end
+  # def get_articles
+  #   raw_data = $redis.get("article")
+  #   display = JSON.parse(raw_data)
+  # end
 
   # Takes in Markdown text and returns HTML
   def render_to_html(text)
@@ -81,22 +81,23 @@ class App < Sinatra::Base
   def generate_documents_array
     @documents = []
     $redis.keys("*article:*").each do |key|
-      document = create_document_to_show(key)
+      document = get_document_from_redis(key)
       @documents.push(document)
-      # binding.pry
     end
+      # binding.pry
     @documents
   end
 
-  # Get article from redis
-  def create_document_to_show(key)
+  # Get article from redis and turn it in
+  # to a hash
+  def get_document_from_redis(key)
     raw_data = $redis.get(key)
     parsed_data = JSON.parse(raw_data)
+    # binding.pry
+  end
 
-    document = WikiDocument.new(
-      parsed_data["title"],
-      parsed_data["author"],
-      parsed_data["text"])
+  def add_document_to_redis(doc)
+    $redis.set(doc.id, doc.to_json)
   end
 
   ########################
@@ -123,7 +124,7 @@ class App < Sinatra::Base
     # should be deleted once testing is done.
     # The default is auto which only shows the
     # screen when approval is needed.
-    @url = "#{GOOGLE_ENDPOINT}/auth?scope=email" +
+    @url = "#{GOOGLE_ENDPOINT}/auth?scope=email%20profile" +
       "&redirect_uri=#{GOOGLE_REDIRECT_URI}" +
       "&response_type=code" +
       "&client_id=#{GOOGLE_CLIENT_ID}" +
@@ -173,7 +174,11 @@ class App < Sinatra::Base
         # binding.pry
       session[:access_token] = response["access_token"]
 
-      request = HTTParty.get()
+
+      profile_uri = "https://www.googleapis.com/plus/v1/people/me"
+      request =  HTTParty.get(profile_uri, { :headers => {"Authorization" => "Bearer #{session[:access_token]}"}})
+      #TODO: If you do a binding.pry here and type request, you will see the data that you want.
+      # binding.pry
     end
     # Redirect to avoid rendering of auth code
     # issue?
@@ -186,9 +191,11 @@ class App < Sinatra::Base
     render :erb, :document_new
   end
 
-  # FIXME Getting wrong values
+  # FIXME Changed @documents from objects to
+  # Hashes and therefore need to revise this.
   get('/documents/:id') do
       @documents = generate_documents_array
+      # binding.pry
       @documents.each do |doc|
         @document = doc if doc.title == "\##{params[:id]}"
       end
@@ -201,7 +208,17 @@ class App < Sinatra::Base
   end
 
   # Get all articles from Redis.
+  # Query String request values from @documents array
+  # Query string should start the range, which adds 10
+  # in Ruby code @documents[index_start, index_start+10]
+  # Each query string should generate a page. Or the strings
+  # should add 10.
   get '/documents' do
+    index_start = params[:index_start].to_i || 0
+    @generated_documents_array = generate_documents_array
+    @documents = @generated_documents_array[index_start, index_start + 10]
+
+    # binding.pry
     render :erb, :documents
   end
 
@@ -213,8 +230,8 @@ class App < Sinatra::Base
       params[:article_author],
       params[:article_text])
 
-    binding.pry
-    $redis.set("article:#{$redis.incr("counter")}", doc.to_json)
+    add_document_to_redis(doc)
+    # binding.pry
     redirect '/documents'
   end
 
