@@ -237,9 +237,12 @@ class App < Sinatra::Base
   # to make a real time editor. Could not figure
   # out the submission process without Javascript
   put('/documents/:id') do
-    binding.pry
     # Find article to be edited
-    # isolate new value.
+    document = find_article(params)
+    binding.pry
+    # isolate new value and replace existing article.
+    document["text"] = params["article_text"]
+    $redis.set(document["key"], document.to_json)
     # submit to $redis
     redirect to("/documents/#{params[:id]}")
   end
