@@ -20,6 +20,7 @@ end
 
 group :production do
   # gems specific just in the production environment
+  require 'rack/ssl'
 end
 
 group :test do
