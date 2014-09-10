@@ -21,6 +21,8 @@ class App < Sinatra::Base
   # Configuration
   ########################
 
+  attr_reader :user
+
   configure do
     enable :logging
     enable :method_override
@@ -60,11 +62,6 @@ class App < Sinatra::Base
   ########################
   # Methods
   ########################
-
-  # def get_articles
-  #   raw_data = $redis.get("article")
-  #   display = JSON.parse(raw_data)
-  # end
 
   # Takes in Markdown text and returns HTML
   def render_to_html(text)
@@ -110,6 +107,10 @@ class App < Sinatra::Base
       end
     end
   end
+
+  # def authenticate?
+  #   @user == request["emails"][0]["value"]
+  # end
 
   ########################
   # Routes
@@ -189,7 +190,10 @@ class App < Sinatra::Base
       profile_uri = "https://www.googleapis.com/plus/v1/people/me"
       request =  HTTParty.get(profile_uri, { :headers => {"Authorization" => "Bearer #{session[:access_token]}"}})
       #TODO: If you do a binding.pry here and type request, you will see the data that you want.
-      # binding.pry
+      binding.pry
+      # Save person's identity so that you can
+      #steal from them.
+      @user = request["emails"][0]["value"]
     end
     # Google recommend that the server first
     # handle the request, then redirect to
@@ -222,6 +226,11 @@ class App < Sinatra::Base
   get "/documents/:id/edit" do
     @document = find_article(params)
     render :erb, :document_edit
+  end
+
+    get "/documents/:id/delete" do
+    @document = find_article(params)
+    render :erb, :document_delete
   end
 
   # Get all articles from Redis.
