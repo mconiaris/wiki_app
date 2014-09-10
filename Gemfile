@@ -10,7 +10,10 @@ gem 'markdown'
 gem 'httparty'
   # To create SSL connections as required
   # by Google's Oauth2 tool
-gem 'rack-ssl'
+  # Having an issue with Heroku. May not
+  # be needed in deployment.
+  # https://github.com/josh/rack-ssl
+# gem 'rack-ssl'
 
 # only used in development locally
 group :development do

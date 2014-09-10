@@ -3,11 +3,11 @@ require 'securerandom'
 require 'sinatra/base'
 require 'redcarpet'
 require 'httparty'
+# require 'rack/ssl'
 require 'redis'
 require 'json'
-require 'pry'
+require 'pry' if ENV['RACK_ENV'] == 'development'
 require 'uri'
-require 'rack/ssl'
 
 # TODO: newer way for Google Oauth:
 # https://developers.google.com/accounts/docs/OAuth2Login#createxsrftoken
