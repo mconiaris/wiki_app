@@ -95,7 +95,7 @@ class App < Sinatra::Base
   end
 
   def add_document_to_redis(doc)
-    binding.pry
+    # binding.pry
     $redis.set(doc.key, doc.to_json)
   end
 
@@ -190,7 +190,7 @@ class App < Sinatra::Base
       profile_uri = "https://www.googleapis.com/plus/v1/people/me"
       request =  HTTParty.get(profile_uri, { :headers => {"Authorization" => "Bearer #{session[:access_token]}"}})
       #TODO: If you do a binding.pry here and type request, you will see the data that you want.
-      binding.pry
+      # binding.pry
       # Save person's identity so that you can
       #steal from them.
       @user = request["emails"][0]["value"]
@@ -279,7 +279,7 @@ class App < Sinatra::Base
     # isolate new value and replace existing article.
     document["text"] = params["article_text"]
     # submit to $redis
-    binding.pry
+    # binding.pry
     $redis.set(document["key"], document.to_json)
     redirect to("/documents/#{params[:id]}")
   end
