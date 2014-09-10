@@ -254,7 +254,6 @@ class App < Sinatra::Base
     # do not overwrite old ones.
     doc.id = $redis.keys.count + doc.id
     doc.key = "article:#{doc.id}"
-    binding.pry
     add_document_to_redis(doc)
     redirect '/documents'
   end
@@ -270,12 +269,16 @@ class App < Sinatra::Base
     # binding.pry
     # isolate new value and replace existing article.
     document["text"] = params["article_text"]
-    $redis.set(document["key"], document.to_json)
     # submit to $redis
+    binding.pry
+    $redis.set(document["key"], document.to_json)
     redirect to("/documents/#{params[:id]}")
   end
 
   # Delete a document
+  # TODO: Hook up with a UX class person
+  # The flow is not very good here.
+  # It works though.
   delete('/documents/:id') do
     document = find_article(params)
     # binding.pry
