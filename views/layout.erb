@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 
-    <title>wiki_app</title>
+    <title>WikiTikiTakaTuku</title>
 
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,20 +12,17 @@
     <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" media="all">
   </head>
 
+  <a href="/">
+    <header>WikiTikiTakaTuku</header>
+  </a>
   <body>
-    <header>
-      <h1>WikiTikiTakaTuku</h1>
-    </header>
     <nav>
       <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="#">About</a></li>
         <li>
-          <% if session[:access_token] %>
-            <a href="/logout">Logout</a>
-          <% else %>
-            <a id="sign_in" href="<%= @url %>">Login with Google</a>
-          <% end %>
+          <a href="/">Home</a>
+        </li>
+        <li>
+          <a href="#">About</a>
         </li>
         <li>
           <a href='documents/new'>Create a Document</a>
@@ -33,11 +30,21 @@
         <li>
           <a href="/documents?index_start=0">Look at Documents</a>
         </li>
+        <li>
+          <% if session[:access_token] %>
+            <a href="/logout">Logout</a>
+          <% else %>
+            <a id="sign_in" href="<%= @url %>">Login with Google</a>
+          <% end %>
+        </li>
       </ul>
     </nav>
-    <%= yield %>
-    <footer>
-      <h6>@ Michael Coniaris Awesomeness</h6>
-    </footer>
+    <div>
+      <%= yield %>
+    </div>
   </body>
+
+  <footer>
+    <h6>@ Michael Coniaris Awesomeness</h6>
+  </footer>
 </html>
