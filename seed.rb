@@ -2,7 +2,7 @@ require './wikidocument'
 require 'redis'
 require 'json'
 require 'uri'
-require 'pry'
+# require 'pry'
 
 a = <<EOF
 ## WDInstagram with Redis
