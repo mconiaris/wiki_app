@@ -1,7 +1,7 @@
 class WikiDocument
 
-  attr_reader :author, :time, :id
-  attr_accessor :title, :text, :key
+  attr_reader :author, :time
+  attr_accessor :title, :text, :key, :id
 
   @@id = 1
 

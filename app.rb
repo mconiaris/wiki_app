@@ -98,7 +98,7 @@ class App < Sinatra::Base
   end
 
   def add_document_to_redis(doc)
-    # binding.pry
+    binding.pry
     $redis.set(doc.key, doc.to_json)
   end
 
@@ -239,7 +239,6 @@ class App < Sinatra::Base
   end
 
   get('/logout') do
-    # binding.pry
     session[:access_token] = nil
     redirect to("/")
   end
@@ -251,7 +250,11 @@ class App < Sinatra::Base
       params[:article_title],
       params[:article_author],
       params[:article_text])
-
+    # Hack to make sure new entries
+    # do not overwrite old ones.
+    doc.id = $redis.keys.count + doc.id
+    doc.key = "article:#{doc.id}"
+    binding.pry
     add_document_to_redis(doc)
     redirect '/documents'
   end
@@ -264,7 +267,7 @@ class App < Sinatra::Base
   put('/documents/:id') do
     # Find article to be edited
     document = find_article(params)
-    binding.pry
+    # binding.pry
     # isolate new value and replace existing article.
     document["text"] = params["article_text"]
     $redis.set(document["key"], document.to_json)
@@ -275,7 +278,7 @@ class App < Sinatra::Base
   # Delete a document
   delete('/documents/:id') do
     document = find_article(params)
-    binding.pry
+    # binding.pry
     $redis.del(document["key"])
     redirect to '/documents'
   end
