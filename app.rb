@@ -7,6 +7,7 @@ require 'redis'
 require 'json'
 require 'pry'
 require 'uri'
+require 'rack/ssl'
 
 # TODO: newer way for Google Oauth:
 # https://developers.google.com/accounts/docs/OAuth2Login#createxsrftoken

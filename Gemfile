@@ -8,19 +8,18 @@ gem 'redis',  '3.1.0'
 gem 'redcarpet'
 gem 'markdown'
 gem 'httparty'
+  # To create SSL connections as required
+  # by Google's Oauth2 tool
+gem 'rack-ssl'
 
 # only used in development locally
 group :development do
   gem 'pry'
   gem 'shotgun'
-  # To create SSL connections as required
-  # by Google's Oauth2 tool
-  gem 'rack-ssl'
 end
 
 group :production do
   # gems specific just in the production environment
-  require 'rack/ssl'
 end
 
 group :test do
