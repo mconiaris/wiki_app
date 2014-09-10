@@ -1,6 +1,4 @@
-# TODO: fix test string.
-# Cannot get the right test text to go in.
-# It works fine when I do it, but not in a test.
+# Text for test.
 mark_text = <<EOF
 ### ### Necessary for MVP
 

@@ -18,18 +18,10 @@
   <body>
     <nav>
       <ul>
-        <li>
-          <a href="/">Home</a>
-        </li>
-        <li>
-          <a href="#">About</a>
-        </li>
-        <li>
-          <a href='documents/new'>Create a Document</a>
-        </li>
-        <li>
-          <a href="/documents?index_start=0">Look at Documents</a>
-        </li>
+        <li><a href="/">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href='documents/new'>Create a Document</a></li>
+        <li><a href="/documents?index_start=0">Look at Documents</a></li>
         <li>
           <% if session[:access_token] %>
             <a href="/logout">Logout</a>

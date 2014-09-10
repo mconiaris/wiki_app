@@ -1,5 +1,9 @@
-<%= render_to_html(@document["title"])
-    render_to_html(@document["author"])
-    render_to_html(@document["text"]) %>
-<a href="/documents/<%=params["id"]%>/edit"/>Edit</a> |
-<a href="/documents/<%=params["id"]%>/delete"/>Delete</a>
+<!-- No HTML tags in most of this section
+since it is redered automatically. -->
+<article>
+  <%= render_to_html(@document["title"])
+      render_to_html(@document["author"])
+      render_to_html(@document["text"]) %>
+  <button><a href="/documents/<%=params["id"]%>/edit"/>Edit</a></button> ~
+  <button><a href="/documents/<%=params["id"]%>/delete"/>Delete</a></button>
+</article>

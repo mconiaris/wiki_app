@@ -1,12 +1,15 @@
-<% if @documents != nil %>
-  <% @documents.each do |document| %>
-    <%= render_to_html(document["title"]) %>
-    <%= render_to_html(document["author"]) %>
-    <%= render_to_html(document["text"]) %>
-    <%= document["time"] %> | <a href="/documents/<%= document["title"].gsub("\#", "") %>"/>Article</a> | <%= document["key"] %>
-    <% end %>
-  <% new_index = params[:index_start].to_i + 10 %>
-  <a href="/documents?index_start=<%="#{new_index}"%>"/>Next</a>
-<% else %>
-  <p>No more documents!</p>
-<% end %>
+<section>
+  <% if @documents != nil %>
+    <% @documents.each do |document| %>
+      <%= render_to_html(document["title"]) %>
+      <%= render_to_html("By #{document["author"]}") %>
+      <%= render_to_html(document["text"]) %>
+      <h3><a href="/documents/<%= document["title"].gsub("\#", "") %>"/>Article</a> | <%= document["time"] %> | <%= document["key"] %></h3>
+      <br><br><br><br>
+      <% end %>
+    <% new_index = params[:index_start].to_i + 10 %>
+    <a href="/documents?index_start=<%="#{new_index}"%>"/>More Articles</a>
+  <% else %>
+    <h1>No more documents!</h1>
+  <% end %>
+</section>
