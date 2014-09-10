@@ -39,7 +39,8 @@ class App < Sinatra::Base
     GOOGLE_ENDPOINT = "https://accounts.google.com/o/oauth2"
     # TODO: Use high5 to get https working instead.
     # Heroku offers https on all their deployed sites.
-    GOOGLE_REDIRECT_URI = "http://localhost:3000/oauth2callback"
+    # GOOGLE_REDIRECT_URI = "http://localhost:3000/oauth2callback"
+    GOOGLE_REDIRECT_URI = "http://shrouded-anchorage-2122.herokuapp.com/oauth2callback"
     uri = URI.parse(ENV["REDISTOGO_URL"])
     $redis = Redis.new({:host => uri.host,
                     :port => uri.port,
