@@ -13,7 +13,6 @@ EOF
 # If you are not using Rails, tag all the example
 # groups in which you want to use Capybara with
 # :type => :feature.
-# This is sample code.
 describe("index.erb") do
   it("exists and has a working path") do
     visit("/")
