@@ -1,4 +1,4 @@
-require './applicationcontroller'
+require './application_controller'
 
 # TODO: newer way for Google Oauth:
 # https://developers.google.com/accounts/docs/OAuth2Login#createxsrftoken
@@ -10,7 +10,7 @@ class App < ApplicationController
 
 
 
-  attr_reader :user
+  # attr_reader :user
 
   ########################
   # Methods
@@ -43,7 +43,7 @@ class App < ApplicationController
   # to a hash
   def get_document_from_redis(key)
     raw_data = $redis.get(key)
-    parsed_data = JSON.parse(raw_data)
+    JSON.parse(raw_data)
     # binding.pry
   end
 
@@ -181,7 +181,7 @@ class App < ApplicationController
     render :erb, :"documents/edit"
   end
 
-    get "/documents/:id/delete" do
+  get "/documents/:id/delete" do
     @document = find_article(params)
     render :erb, :"documents/delete_confirmation"
   end

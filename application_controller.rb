@@ -1,4 +1,4 @@
-require './helpers/application_helper.rb'
+require './helpers/application_helper'
 
 class ApplicationController < Sinatra::Base
 
@@ -43,4 +43,5 @@ class ApplicationController < Sinatra::Base
   after do
     logger.info "Response Headers: #{response.headers}"
   end
+
 end
