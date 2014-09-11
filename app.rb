@@ -1,64 +1,16 @@
-require './wikidocument'
-require 'securerandom'
-require 'sinatra/base'
-require 'redcarpet'
-require 'httparty'
-# require 'rack/ssl'
-require 'redis'
-require 'json'
-require 'pry' if ENV['RACK_ENV'] == 'development'
-require 'uri'
+require './applicationcontroller'
 
 # TODO: newer way for Google Oauth:
 # https://developers.google.com/accounts/docs/OAuth2Login#createxsrftoken
 
 # TODO Look into use command in Ruby
-class App < Sinatra::Base
+class App < ApplicationController
   extend Redcarpet
   # use Rack::SSL
 
-  ########################
-  # Configuration
-  ########################
+
 
   attr_reader :user
-
-  configure do
-    enable :logging
-    enable :method_override
-    enable :sessions
-    # TODO: Research set :session_secret further
-    # set the secret yourself, so all your
-    # application instances share it:
-    set :session_secret, 'super secret'
-
-    GOOGLE_CLIENT_ID = ENV['GOOGLE_WIKI_APP_ID']
-    GOOGLE_CLIENT_SECRET = ENV['GOOGLE_WIKI_APP_CLIENT_SECRET']
-    # This endpoint is accessible over SSL, and
-    # HTTP connections are refused.
-    GOOGLE_ENDPOINT = "https://accounts.google.com/o/oauth2"
-    # TODO: Use high5 to get https working instead.
-    # Heroku offers https on all their deployed sites.
-    # GOOGLE_REDIRECT_URI = "http://localhost:3000/oauth2callback"
-    GOOGLE_REDIRECT_URI = "http://shrouded-anchorage-2122.herokuapp.com/oauth2callback"
-    uri = URI.parse(ENV["REDISTOGO_URL"])
-    $redis = Redis.new({:host => uri.host,
-                    :port => uri.port,
-                    :password => uri.password})
-    # Set Redis Counter
-    # counter = 0
-    # Array to display documents
-
-  end
-
-  before do
-    logger.info "Request Headers: #{headers}"
-    logger.warn "Params: #{params}"
-  end
-
-  after do
-    logger.info "Response Headers: #{response.headers}"
-  end
 
   ########################
   # Methods
@@ -209,7 +161,7 @@ class App < Sinatra::Base
   # Opens a form that allows the user to
   # create a new document.
   get('/documents/new') do
-    render :erb, :document_new
+    render :erb, :"documents/new"
   end
 
   # FIXME Changed @documents from objects to
@@ -221,17 +173,17 @@ class App < Sinatra::Base
       # return that one value
     # @document = create_document_to_show("\##{params[:id]}")
     # binding.pry
-    render :erb, :documents_show
+    render :erb, :"documents/show"
   end
 
   get "/documents/:id/edit" do
     @document = find_article(params)
-    render :erb, :document_edit
+    render :erb, :"documents/edit"
   end
 
     get "/documents/:id/delete" do
     @document = find_article(params)
-    render :erb, :document_delete
+    render :erb, :"documents/delete_confirmation"
   end
 
   # Get all articles from Redis.
@@ -245,7 +197,7 @@ class App < Sinatra::Base
     @generated_documents_array = generate_documents_array
     @documents = @generated_documents_array[index_start, index_start + 10]
     # binding.pry
-    render :erb, :documents
+    render :erb, :"documents/index"
   end
 
   get('/logout') do
