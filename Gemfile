@@ -8,6 +8,7 @@ gem 'redis',  '3.1.0'
 gem 'redcarpet'
 gem 'markdown'
 gem 'httparty'
+gem 'rack', '~> 1.4.5'
   # To create SSL connections as required
   # by Google's Oauth2 tool
   # Having an issue with Heroku. May not
