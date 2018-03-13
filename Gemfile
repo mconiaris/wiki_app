@@ -1,7 +1,7 @@
 # A sample Gemfile
 source "https://rubygems.org"
 
-ruby "2.3.3"
+ruby "2.4.3"
 
 gem 'sinatra', '2.0.0'
 gem 'redis',  '3.1.0'
